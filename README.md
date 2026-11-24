@@ -7,6 +7,7 @@
 
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-All%20Versions-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![npm](https://img.shields.io/npm/v/super-nvm?style=for-the-badge&logo=npm&color=CB3837)
 ![VS Code](https://img.shields.io/badge/VS%20Code-Compatible-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
 ![Cursor](https://img.shields.io/badge/Cursor-Compatible-000000?style=for-the-badge&logoColor=white)
 ![Antigravity](https://img.shields.io/badge/Google%20Antigravity-Compatible-4285F4?style=for-the-badge&logo=google&logoColor=white)
@@ -134,24 +135,42 @@ Super NVM offers unified Node management across your entire development stack:
 
 ---
 
-## 📥 How Users Install From GitHub
+## 📥 How to Install & Run Super NVM
 
-When you publish this project on GitHub, your users can get started in 3 simple steps:
+Super NVM can be run in seconds via NPX, installed globally via NPM, or downloaded as an editor extension and desktop package:
 
-### Method 1: The All-in-One Multi-Editor Installer (Easiest)
-1. Download **`super-nvm-1.0.0.vsix`** and **`install-all-editors.bat`** from the [GitHub Releases](../../releases).
+### Method 1: Instant Launch via NPX (Zero Download Required)
+Run directly from any terminal without manual setup:
+```bash
+# 🚀 1. Auto-detect all editors and install the Super NVM extension:
+npx super-nvm --install-extension
+
+# 🌐 2. Or launch the visual browser dashboard immediately:
+npx super-nvm
+```
+
+### Method 2: Global NPM Installation
+Install Super NVM as a system-wide developer tool on your PC:
+```bash
+npm install -g super-nvm
+```
+- Run `super-nvm` anywhere to open the visual web dashboard (`http://localhost:4321`).
+- Run `super-nvm --install-extension` (or `super-nvm -i`) to automatically inject the extension into VS Code, Antigravity IDE, and Cursor!
+
+### Method 3: 1-Click Multi-Editor Batch Installer (GitHub Release)
+1. Download **`super-nvm-1.0.0.vsix`** and **`install-all-editors.bat`** from [GitHub Releases](../../releases).
 2. Double-click **`install-all-editors.bat`**.
-3. The script automatically detects **Antigravity IDE**, **VS Code**, **Cursor**, **Windsurf**, and **VSCodium** on the machine and installs Super NVM into all of them at once!
+3. The script automatically detects **Google Antigravity IDE**, **VS Code**, **Cursor**, **Windsurf**, and **VSCodium** on the machine and installs Super NVM into all of them at once!
 
-### Method 2: Standalone Desktop Web Dashboard + System Tray
+### Method 4: Standalone Desktop Web Dashboard + System Tray
 1. Download **`super-nvm-portable.zip`** from [GitHub Releases](../../releases).
 2. Extract to any folder.
 3. Double-click **`launch-ui.bat`** to open the web dashboard (`http://localhost:4321`).
 4. Double-click **`launch-tray.bat`** for right-click taskbar switching.
 
-### Method 3: Run from Source
+### Method 5: Run from Source
 ```bash
-git clone https://github.com/<your-username>/super-nvm.git
+git clone https://github.com/pratik-maurya/Super-nvm.git
 cd super-nvm
 npm install
 npm run compile
