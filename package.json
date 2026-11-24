@@ -2,14 +2,14 @@
   "name": "super-nvm",
   "displayName": "Super NVM - Visual Node Version Manager",
   "description": "Visual Manager for Node.js versions with NVM on Windows — use inside VS Code, Cursor, WebStorm, or standalone in any browser/desktop.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "resources/nvm-icon.png",
   "publisher": "super-nvm",
   "author": "Pratik Maurya",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pratik-maurya/Super-nvm"
+    "url": "git+https://github.com/pratik-maurya/Super-nvm.git"
   },
   "engines": {
     "vscode": "^1.80.0",
@@ -31,8 +31,8 @@
   ],
   "main": "./out/vscode/extension.js",
   "bin": {
-    "super-nvm": "./bin/super-nvm.js",
-    "nvm-ui": "./bin/super-nvm.js"
+    "super-nvm": "bin/super-nvm.js",
+    "nvm-ui": "bin/super-nvm.js"
   },
   "activationEvents": [
     "onStartupFinished",
