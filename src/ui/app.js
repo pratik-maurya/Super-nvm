@@ -707,6 +707,25 @@
     if (state.activeTab === 'releases') API.getReleases();
   });
 
+  const btnInstallExt = document.getElementById('btnInstallExt');
+  if (btnInstallExt) {
+    if (isVsCode) {
+      btnInstallExt.style.display = 'none';
+    } else {
+      btnInstallExt.addEventListener('click', async () => {
+        showToast('Scanning editors and installing Super NVM extension...', 'info');
+        switchTab('activity');
+        logToTerminal('\n[Super NVM] Launching Multi-Editor Extension Installer...');
+        try {
+          const res = await fetch('/api/install-extension', { method: 'POST' });
+          if (!res.ok) throw new Error('Request failed');
+        } catch (e) {
+          showToast('Failed to start extension installation: ' + e.message, 'error');
+        }
+      });
+    }
+  }
+
   btnQuickInstallModal.addEventListener('click', () => openInstallModal());
   btnCloseModal.addEventListener('click', closeInstallModal);
   btnCancelInstall.addEventListener('click', closeInstallModal);

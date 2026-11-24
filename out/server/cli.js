@@ -2,27 +2,46 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const standaloneServer_1 = require("./standaloneServer");
+const editorInstaller_1 = require("../core/editorInstaller");
 async function main() {
     const args = process.argv.slice(2);
     let port = 4321;
     let autoOpen = true;
     for (let i = 0; i < args.length; i++) {
-        if (args[i] === '--port' || args[i] === '-p') {
+        const arg = args[i].toLowerCase();
+        if (arg === '--install-extension' || arg === '-i' || arg === 'install-extension') {
+            const res = await (0, editorInstaller_1.installExtensionToEditors)();
+            process.exit(res.success ? 0 : 1);
+        }
+        else if (arg === '--detect-editors') {
+            const editors = (0, editorInstaller_1.detectEditors)();
+            console.log(`\nDetected ${editors.length} supported editor(s):`);
+            for (const ed of editors) {
+                console.log(`  • ${ed.name} (${ed.cliPath})`);
+            }
+            console.log('');
+            process.exit(0);
+        }
+        else if (arg === '--port' || arg === '-p') {
             port = parseInt(args[i + 1], 10) || 4321;
             i++;
         }
-        else if (args[i] === '--no-browser' || args[i] === '-n') {
+        else if (arg === '--no-browser' || arg === '-n') {
             autoOpen = false;
         }
-        else if (args[i] === '--help' || args[i] === '-h') {
+        else if (arg === '--help' || arg === '-h') {
             console.log(`
 Super NVM - Node Version Manager Graphical Interface
 Manage Node.js versions visually inside VS Code or in any browser!
 
 Usage:
   super-nvm [options]
+  npx super-nvm [options]
 
-Options:
+Commands & Options:
+  -i, --install-extension Automatically install Super NVM extension into all detected editors
+                          (Google Antigravity IDE, VS Code, Cursor, Windsurf, VSCodium)
+  --detect-editors        Scan and list installed code editors compatible with Super NVM
   -p, --port <number>     Port to run the UI server on (default: 4321)
   -n, --no-browser        Do not automatically open default web browser
   -h, --help              Show this help message

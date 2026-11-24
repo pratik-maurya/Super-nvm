@@ -39,6 +39,7 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
 const nvm_1 = require("../core/nvm");
+const editorInstaller_1 = require("../core/editorInstaller");
 async function startStandaloneServer(port = 4321, autoOpenBrowser = true, projectDir) {
     const nvm = new nvm_1.NvmCore();
     const sseClients = [];
@@ -246,6 +247,38 @@ async function startStandaloneServer(port = 4321, autoOpenBrowser = true, projec
                     res.writeHead(500, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({ error: err.message }));
                 }
+                return;
+            }
+            if (pathname === '/api/editors') {
+                try {
+                    const editors = (0, editorInstaller_1.detectEditors)();
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(editors));
+                }
+                catch (err) {
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: err.message }));
+                }
+                return;
+            }
+            if (pathname === '/api/install-extension' && req.method === 'POST') {
+                broadcastSSE('log', '\n[Super NVM] Starting multi-editor extension installer...');
+                (0, editorInstaller_1.installExtensionToEditors)((msg) => {
+                    broadcastSSE('log', msg);
+                }).then((resObj) => {
+                    broadcastSSE('operationComplete', {
+                        success: resObj.success,
+                        message: resObj.message
+                    });
+                }).catch((err) => {
+                    broadcastSSE('log', `\n[Error] ${err.message}`);
+                    broadcastSSE('operationComplete', {
+                        success: false,
+                        message: err.message
+                    });
+                });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ started: true }));
                 return;
             }
             // SSE Event Stream for live progress

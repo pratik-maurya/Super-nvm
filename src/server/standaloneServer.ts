@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
 import { NvmCore } from '../core/nvm';
+import { detectEditors, installExtensionToEditors } from '../core/editorInstaller';
 
 export interface ServerInstance {
   server: http.Server;
@@ -249,6 +250,40 @@ export async function startStandaloneServer(
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: err.message }));
       }
+      return;
+    }
+
+    if (pathname === '/api/editors') {
+      try {
+        const editors = detectEditors();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(editors));
+      } catch (err: any) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+      return;
+    }
+
+    if (pathname === '/api/install-extension' && req.method === 'POST') {
+      broadcastSSE('log', '\n[Super NVM] Starting multi-editor extension installer...');
+      installExtensionToEditors((msg) => {
+        broadcastSSE('log', msg);
+      }).then((resObj) => {
+        broadcastSSE('operationComplete', {
+          success: resObj.success,
+          message: resObj.message
+        });
+      }).catch((err) => {
+        broadcastSSE('log', `\n[Error] ${err.message}`);
+        broadcastSSE('operationComplete', {
+          success: false,
+          message: err.message
+        });
+      });
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ started: true }));
       return;
     }
 
