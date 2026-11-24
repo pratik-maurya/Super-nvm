@@ -5,7 +5,15 @@
   "version": "1.0.0",
   "icon": "resources/nvm-icon.png",
   "publisher": "super-nvm",
+  "author": "Pratik Maurya",
   "license": "MIT",
+  "files": [
+    "out",
+    "bin",
+    "resources",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/pratik-maurya/Super-nvm"
