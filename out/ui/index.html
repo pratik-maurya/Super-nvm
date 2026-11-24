@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super NVM - Node Version Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar / Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 100 100" width="38" height="38" fill="none">
+            <defs>
+              <radialGradient id="headerHexRadial" cx="50%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#0f3d24" />
+                <stop offset="60%" stop-color="#051f12" />
+                <stop offset="100%" stop-color="#020d08" />
+              </radialGradient>
+              <linearGradient id="headerHexBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bbf7d0" />
+                <stop offset="30%" stop-color="#4ade80" />
+                <stop offset="75%" stop-color="#22c55e" />
+                <stop offset="100%" stop-color="#15803d" />
+              </linearGradient>
+              <linearGradient id="headerSuperGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fef9c3" />
+                <stop offset="25%" stop-color="#86efac" />
+                <stop offset="65%" stop-color="#22c55e" />
+                <stop offset="100%" stop-color="#15803d" />
+              </linearGradient>
+            </defs>
+            <polygon points="50,4 92,26 92,74 50,96 8,74 8,26" fill="url(#headerHexRadial)" stroke="url(#headerHexBorder)" stroke-width="5" stroke-linejoin="round" />
+            <polygon points="50,11 85,29 85,71 50,89 15,71 15,29" fill="none" stroke="url(#headerHexBorder)" stroke-width="1.6" stroke-opacity="0.35" stroke-linejoin="round" />
+            <path d="M 74,23 L 34,23 C 22,23 16,33 22,43 L 46,43 C 52,43 55,47 50,53 L 26,77 L 68,77 C 80,77 86,67 80,57 L 56,57 C 50,57 47,53 52,47 L 74,23 Z" fill="url(#headerSuperGrad)" stroke="#042010" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M 49,43 L 57,43 L 43,61 L 53,61 L 35,77 L 41,56 L 33,56 Z" fill="#fef08a" opacity="0.95" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="app-title">Super <span>NVM</span></h1>
+          <p class="app-subtitle">Node Version Manager for Windows</p>
+        </div>
+      </div>
+
+      <!-- Quick Status Badges -->
+      <div class="header-status">
+        <div class="status-pill active-version-pill" id="activeVersionPill">
+          <span class="status-dot online"></span>
+          <span class="label">Current:</span>
+          <strong id="headerCurrentVer">Detecting...</strong>
+        </div>
+        <div class="status-pill nvm-mode-pill" id="nvmModePill">
+          <span class="label">NVM:</span>
+          <span id="headerNvmMode">v2.0.1 (shim)</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-icon" id="btnRefresh" title="Refresh versions">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+            <span>Refresh</span>
+          </button>
+          <button class="btn btn-primary" id="btnQuickInstallModal">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            <span>Install Version</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Workspace / Project Detection Banner -->
+    <div class="project-banner hidden" id="projectBanner">
+      <div class="banner-content">
+        <div class="banner-icon">💡</div>
+        <div class="banner-text">
+          <span id="projectBannerText">Workspace requires Node <strong>v...</strong></span>
+        </div>
+      </div>
+      <div class="banner-buttons">
+        <button class="btn btn-sm btn-accent" id="btnSwitchToProjectVer">Switch Now</button>
+        <button class="btn btn-sm btn-secondary" id="btnDismissBanner">Dismiss</button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="installed">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <span>Installed Versions</span>
+        <span class="badge" id="installedCount">0</span>
+      </button>
+
+      <button class="tab-btn" data-tab="releases">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        <span>Available Releases</span>
+        <span class="badge badge-lts">Remote</span>
+      </button>
+
+      <button class="tab-btn" data-tab="activity">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+          <polyline points="4 17 10 11 4 5"/>
+          <line x1="12" y1="19" x2="20" y2="19"/>
+        </svg>
+        <span>Terminal & Logs</span>
+        <span class="badge badge-pulse hidden" id="terminalBadge">Active</span>
+      </button>
+
+      <button class="tab-btn" data-tab="system">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Environment</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- 1. Installed Versions View -->
+      <section class="tab-pane active" id="paneInstalled">
+        <div class="section-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="installedSearch" placeholder="Filter installed versions...">
+          </div>
+          <div class="toolbar-hint">
+            <span>Click <strong>Switch</strong> on any version to activate it system-wide.</span>
+          </div>
+        </div>
+
+        <div class="version-grid" id="installedList">
+          <!-- Populated by JS -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <span>Loading installed Node.js versions...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Remote Releases View -->
+      <section class="tab-pane" id="paneReleases">
+        <div class="section-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="releasesSearch" placeholder="Search version (e.g. 22, 20.18)...">
+          </div>
+          <div class="filter-chips">
+            <button class="chip active" data-filter="lts">LTS Releases (Recommended)</button>
+            <button class="chip" data-filter="all">All Releases</button>
+            <button class="chip" data-filter="security">Security Updates</button>
+          </div>
+        </div>
+
+        <div class="releases-table-container">
+          <table class="releases-table">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>Release Type</th>
+                <th>Release Date</th>
+                <th>Bundled NPM</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="releasesListBody">
+              <!-- Populated by JS -->
+              <tr>
+                <td colspan="6" class="text-center py-8">
+                  <div class="spinner"></div>
+                  <span>Fetching official Node.js releases...</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. Terminal & Activity Logs -->
+      <section class="tab-pane" id="paneActivity">
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="terminal-title">Super NVM Execution Console</span>
+            <div class="terminal-actions">
+              <button class="btn btn-xs btn-secondary" id="btnClearLog">Clear</button>
+              <label class="toggle-label">
+                <input type="checkbox" id="autoScrollCheck" checked>
+                <span>Auto-scroll</span>
+              </label>
+            </div>
+          </div>
+          <pre class="terminal-output" id="terminalOutput">Welcome to Super NVM. Ready to manage Node.js versions.
+</pre>
+        </div>
+      </section>
+
+      <!-- 4. System & Diagnostics -->
+      <section class="tab-pane" id="paneSystem">
+        <div class="system-grid">
+          <div class="card system-card">
+            <h3>NVM Configuration</h3>
+            <div class="kv-list" id="nvmDetailsList">
+              <div class="kv-row">
+                <span class="key">NVM Version:</span>
+                <span class="value" id="sysNvmVer">-</span>
+              </div>
+              <div class="kv-row">
+                <span class="key">Operating Mode:</span>
+                <span class="value" id="sysOpMode">-</span>
+              </div>
+              <div class="kv-row">
+                <span class="key">NVM Binary:</span>
+                <span class="value code" id="sysNvmPath">-</span>
+              </div>
+              <div class="kv-row">
+                <span class="key">Node Installs Dir:</span>
+                <span class="value code" id="sysInstallsPath">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card system-card">
+            <h3>Quick Diagnostics</h3>
+            <p class="card-desc">Check your NVM installation, environment variables, and symlink/shim health.</p>
+            <div class="card-actions">
+              <button class="btn btn-secondary" id="btnRunDoctor">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <span>Run NVM Doctor</span>
+              </button>
+              <button class="btn btn-secondary" id="btnCreateNvmrc">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span>Pin Active to .nvmrc</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Storage & Cache Cleaner Card -->
+          <div class="card system-card storage-card">
+            <div class="card-header-flex">
+              <h3>Storage & Disk Cleaner</h3>
+              <span class="badge" id="storageTotalBadge">Calculating...</span>
+            </div>
+            <p class="card-desc">Disk space occupied by installed Node versions and cached release downloads.</p>
+            
+            <div class="storage-breakdown" id="storageBreakdownList">
+              <div class="spinner"></div>
+            </div>
+
+            <div class="card-actions" style="margin-top: 14px;">
+              <button class="btn btn-secondary btn-clean" id="btnCleanCache">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <span>Clean NVM Cache (<span id="cacheSizeSpan">0 MB</span>)</span>
+              </button>
+              <button class="btn btn-secondary" id="btnLaunchTrayGuide" title="Run background taskbar tray icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                <span>Taskbar Tray Companion</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Install Version -->
+    <div class="modal-overlay hidden" id="installModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Install Node.js Version</h3>
+          <button class="btn-close" id="btnCloseModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <label for="customVersionInput">Enter Version (e.g. <code>22.14.0</code>, <code>lts</code>, <code>latest</code>):</label>
+          <input type="text" id="customVersionInput" placeholder="22.14.0" class="input-field">
+          <div class="modal-presets">
+            <span class="preset-label">Popular:</span>
+            <button class="preset-chip" data-v="lts">LTS (Latest LTS)</button>
+            <button class="preset-chip" data-v="latest">Latest Current</button>
+            <button class="preset-chip" data-v="22">Node 22</button>
+            <button class="preset-chip" data-v="20">Node 20</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelInstall">Cancel</button>
+          <button class="btn btn-primary" id="btnConfirmInstall">Install Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Global Packages & Migrator -->
+    <div class="modal-overlay hidden" id="packagesModal">
+      <div class="modal-dialog" style="width: 520px;">
+        <div class="modal-header">
+          <div>
+            <h3>Global Packages Manager</h3>
+            <span class="app-subtitle" id="packagesModalSubtitle">Packages in Node v...</span>
+          </div>
+          <button class="btn-close" id="btnClosePackagesModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="package-header-bar">
+            <span>Select packages to copy to your currently active Node (<strong id="activeNodeTarget">v...</strong>):</span>
+            <button class="btn btn-xs btn-secondary" id="btnSelectAllPkgs">Select All</button>
+          </div>
+          <div class="packages-checklist" id="packagesChecklist">
+            <div class="spinner"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelPackages">Close</button>
+          <button class="btn btn-primary btn-accent" id="btnConfirmMigrate">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+            <span>Migrate Selected to Active Node</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Confirmation Dialog -->
+    <div class="modal-overlay hidden" id="confirmModal">
+      <div class="modal-dialog" style="width: 420px;">
+        <div class="modal-header">
+          <h3 id="confirmModalTitle">Confirm Action</h3>
+          <button class="btn-close" id="btnCloseConfirmModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalMessage" style="font-size: 13px; line-height: 1.6;">Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelConfirm">Cancel</button>
+          <button class="btn btn-danger" id="btnOkConfirm">Uninstall</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

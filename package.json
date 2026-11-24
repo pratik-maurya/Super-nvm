@@ -1,0 +1,200 @@
+{
+  "name": "super-nvm",
+  "displayName": "Super NVM - Visual Node Version Manager",
+  "description": "Visual Manager for Node.js versions with NVM on Windows — use inside VS Code, Cursor, WebStorm, or standalone in any browser/desktop.",
+  "version": "1.0.0",
+  "icon": "resources/nvm-icon.png",
+  "publisher": "super-nvm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratik/super-nvm"
+  },
+  "engines": {
+    "vscode": "^1.80.0",
+    "node": ">=16.0.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "super-nvm",
+    "nvm",
+    "nvm-windows",
+    "node",
+    "nodejs",
+    "version manager",
+    "gui",
+    "switcher"
+  ],
+  "main": "./out/vscode/extension.js",
+  "bin": {
+    "super-nvm": "./bin/super-nvm.js",
+    "nvm-ui": "./bin/super-nvm.js"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:super-nvm-tree",
+    "onCommand:super-nvm.openDashboard",
+    "onCommand:super-nvm.switchVersion",
+    "onCommand:super-nvm.installVersion",
+    "onCommand:super-nvm.refresh",
+    "onCommand:super-nvm.openStandalone",
+    "onCommand:super-nvm.useFromTree",
+    "onCommand:super-nvm.uninstallFromTree",
+    "onCommand:super-nvm.pinProject",
+    "*"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "super-nvm-container",
+          "title": "Super NVM",
+          "icon": "resources/nvm-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "super-nvm-container": [
+        {
+          "id": "super-nvm-tree",
+          "name": "Installed Versions"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "super-nvm.openDashboard",
+        "key": "ctrl+shift+s n",
+        "mac": "cmd+shift+s n",
+        "when": "!terminalFocus"
+      },
+      {
+        "command": "super-nvm.switchVersion",
+        "key": "ctrl+shift+s v",
+        "mac": "cmd+shift+s v",
+        "when": "!terminalFocus"
+      }
+    ],
+    "commands": [
+      {
+        "command": "super-nvm.openDashboard",
+        "title": "Open Version Manager Dashboard",
+        "category": "Super NVM",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "super-nvm.switchVersion",
+        "title": "Switch Node Version",
+        "category": "Super NVM",
+        "icon": "$(arrow-swap)"
+      },
+      {
+        "command": "super-nvm.installVersion",
+        "title": "Install Node Version",
+        "category": "Super NVM",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "super-nvm.refresh",
+        "title": "Refresh Versions",
+        "category": "Super NVM",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "super-nvm.openStandalone",
+        "title": "Open Standalone GUI in Browser",
+        "category": "Super NVM",
+        "icon": "$(browser)"
+      },
+      {
+        "command": "super-nvm.useFromTree",
+        "title": "Activate This Version",
+        "icon": "$(check)"
+      },
+      {
+        "command": "super-nvm.uninstallFromTree",
+        "title": "Uninstall Version",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "super-nvm.pinProject",
+        "title": "Pin Current Workspace (.nvmrc)",
+        "category": "Super NVM",
+        "icon": "$(pin)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "super-nvm.openDashboard",
+          "when": "view == super-nvm-tree",
+          "group": "navigation@1"
+        },
+        {
+          "command": "super-nvm.refresh",
+          "when": "view == super-nvm-tree",
+          "group": "navigation@2"
+        },
+        {
+          "command": "super-nvm.openStandalone",
+          "when": "view == super-nvm-tree",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "super-nvm.useFromTree",
+          "when": "view == super-nvm-tree && viewItem == inactiveVersion",
+          "group": "inline@1"
+        },
+        {
+          "command": "super-nvm.uninstallFromTree",
+          "when": "view == super-nvm-tree && viewItem != activeVersion",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Super NVM",
+      "properties": {
+        "superNVM.standalonePort": {
+          "type": "number",
+          "default": 4321,
+          "description": "Port to run the standalone Super NVM web server on."
+        },
+        "superNVM.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the active Node.js version in the status bar."
+        },
+        "superNVM.autoDetectProjectVersion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Detect .nvmrc or package.json engines in workspace and suggest switching version."
+        },
+        "superNVM.autoSwitchSilently": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically switch Node.js version when workspace .nvmrc is detected without asking for confirmation."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && node -e \"const fs=require('fs'); fs.cpSync('src/ui', 'out/ui', {recursive:true});\"",
+    "build": "npm run compile",
+    "watch": "tsc -watch -p ./",
+    "start": "node ./bin/super-nvm.js",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^2.24.0",
+    "typescript": "^5.3.3"
+  }
+}
